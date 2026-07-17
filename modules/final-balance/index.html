@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>典華尾款試算表</title>
+  <style>
+    :root {
+      --ink: #2f2926;
+      --muted: #73665e;
+      --line: #d5c8bf;
+      --paper: #fffdf9;
+      --panel: #fbf7f2;
+      --brand: #b48263;
+      --brand-dark: #7f5f50;
+      --accent: #c8a06d;
+      --warn: #d71920;
+      --table-head: #ead8d5;
+      --table-side: #f3dada;
+      --shadow: 0 18px 42px rgba(83, 61, 48, .13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(200, 160, 109, .16), transparent 26rem),
+        linear-gradient(135deg, #fffaf4 0%, #f8f2ec 55%, #fffdf9 100%);
+      font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1360px;
+      margin: 0 auto 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      border: 1px solid var(--brand);
+      background: var(--brand);
+      color: #fff;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--brand-dark);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(340px, 460px) minmax(620px, 1fr);
+      gap: 20px;
+      max-width: 1360px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 253, 249, .94);
+      border: 1px solid rgba(181, 141, 113, .35);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel {
+      position: sticky;
+      top: 18px;
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+    }
+
+    .panel-header {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff 0%, #fbf5ef 100%);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .form {
+      padding: 18px;
+    }
+
+    .section {
+      padding: 0 0 18px;
+      margin: 0 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      color: var(--brand-dark);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      min-height: 38px;
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 84px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(180, 130, 99, .16);
+    }
+
+    .rows {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row-editor {
+      display: grid;
+      grid-template-columns: 1.35fr .68fr .56fr .72fr 36px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .check-field {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--brand-dark);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    .check-field input {
+      width: 16px;
+      min-height: 16px;
+      padding: 0;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .checkbox-group .check-field {
+      justify-content: flex-start;
+    }
+
+    .calc-input {
+      background: #f9f3ed !important;
+      color: var(--brand-dark) !important;
+      font-weight: 800;
+    }
+
+    .icon-button {
+      width: 36px;
+      height: 38px;
+      border: 1px solid #d9c8bb;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--brand-dark);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .add-row {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .preview-panel {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .sheet {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #222;
+      color: #000;
+    }
+
+    .sheet-brand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 16px 6px;
+      min-height: 58px;
+    }
+table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    th, td {
+      border: 1px solid #222;
+      padding: 7px 8px;
+      vertical-align: middle;
+      word-break: break-word;
+    }
+
+    .sheet-title {
+      background: #fee3c6;
+      font-weight: 800;
+      text-align: center;
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    .head {
+      background: var(--table-head);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .side {
+      background: var(--table-side);
+      text-align: center;
+      font-weight: 800;
+      width: 88px;
+      min-width: 88px;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .red {
+      color: var(--warn);
+      font-weight: 800;
+    }
+
+    .subtotal-label {
+      color: var(--warn);
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .note-line {
+      min-height: 32px;
+      border-bottom: 1px solid #b9cbe6;
+      padding: 7px 8px;
+    }
+
+    .signature {
+      height: 88px;
+      vertical-align: top;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100%;
+      min-height: 74px;
+    }
+
+    .signature-left {
+      border-right: 1px solid #222;
+      padding: 8px;
+    }
+
+    .signature-right {
+      padding: 8px;
+      position: relative;
+    }
+
+    .date-mark {
+      position: absolute;
+      right: 28px;
+      bottom: 8px;
+      letter-spacing: 20px;
+    }
+
+    .empty-state {
+      color: #777;
+      text-align: center;
+      padding: 16px;
+    }
+
+
+    .hall-extra {
+      display: none;
+      border: 1px dashed var(--line);
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+
+    .hall-extra.active {
+      display: block;
+    }
+
+    .hall-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hall-options label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin: 4px 0;
+      color: var(--brand-dark);
+    }
+
+    .hall-options input {
+      width: auto;
+      min-height: auto;
+      padding: 0;
+    }
+
+    .readonly-soft {
+      background: #f9f3ed !important;
+      color: var(--brand-dark) !important;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .form-panel {
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding: 14px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid,
+      .row-editor {
+        grid-template-columns: 1fr;
+      }
+
+      .row-editor .icon-button {
+        width: 100%;
+      }
+
+      .preview-panel {
+        padding: 10px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 6px 5px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .topbar,
+      .form-panel {
+        display: none;
+      }
+
+      .app {
+        padding: 0;
+      }
+
+      .layout {
+        display: block;
+        max-width: none;
+      }
+
+      .preview-panel {
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .sheet {
+        max-width: none;
+        width: 190mm;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        
+        <div>
+          <h1>尾款試算表產生器</h1>
+          <p class="subtitle">單機版：宴企快速輸入資料，即時產出婚宴／工商尾款試算表。</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="button secondary" id="resetBtn" type="button">清空重填</button>
+        <button class="button" id="printBtn" type="button">列印 / 另存 PDF</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel form-panel">
+        <div class="panel-header">
+          <h2>試算資料</h2>
+        </div>
+        <form class="form" id="calculatorForm">
+          <section class="section">
+            <h3 class="section-title">基本資訊</h3>
+            <div class="grid">
+              <label class="field">
+                類型
+                <select id="eventType">
+                  <option value=""></option>
+                  <option value="婚宴">婚宴</option>
+                  <option value="工商">工商</option>
+                  <option value="尾牙春酒" selected>尾牙春酒</option>
+                  <option value="其他宴會">其他宴會</option>
+                </select>
+              </label>
+              <label class="field">
+                日期
+                <input id="eventDate" type="date" value="2026-07-11">
+              </label>
+              <label class="field">
+                時段
+                <select id="mealPeriod">
+                  <option value=""></option>
+                  <option value="午宴" selected>午宴</option>
+                  <option value="晚宴">晚宴</option>
+                </select>
+              </label>
+              <label class="field">
+                廳別
+                <select id="hallBase">
+                  <option value="">請選擇</option>
+                  <option value="法蘿">法蘿</option>
+                  <option value="沐曦">沐曦</option>
+                  <option value="雅諾">雅諾</option>
+                  <option value="亞瑟">亞瑟</option>
+                  <option value="伊麗莎白">伊麗莎白</option>
+                  <option value="愛丁堡">愛丁堡</option>
+                  <option value="格林">格林</option>
+                  <option value="紫艷系列">紫艷系列</option>
+                  <option value="世紀盛典系列">世紀盛典系列</option>
+                  <option value="其他">其他，自訂</option>
+                </select>
+                <input id="hall" type="hidden" value="亞瑟">
+              </label>
+              <div id="purpleHallBox" class="hall-extra field full">
+                <label>紫艷系列使用區域</label>
+                <div class="hall-options">
+                  <label><input type="checkbox" name="purpleArea" value="好事"> 好事</label>
+                  <label><input type="checkbox" name="purpleArea" value="喜事"> 喜事</label>
+                  <label><input type="checkbox" name="purpleArea" value="盛事"> 盛事</label>
+                </div>
+              </div>
+              <div id="centuryHallBox" class="hall-extra field full">
+                <label>世紀盛典系列使用區域</label>
+                <div class="hall-options">
+                  <label><input type="checkbox" name="centuryArea" value="世紀"> 世紀</label>
+                  <label><input type="checkbox" name="centuryArea" value="盛典"> 盛典</label>
+                </div>
+              </div>
+              <div id="customHallBox" class="hall-extra field full">
+                <label>自訂廳別</label>
+                <input id="hallCustom" placeholder="請輸入廳別">
+              </div>
+              <label class="field full">
+                廳別顯示名稱
+                <input id="hallDisplay" class="readonly-soft" readonly>
+              </label>
+              <label class="field full">
+                客戶／宴會名稱
+                <input id="clientName" type="text" value="張李府喜宴">
+              </label>
+              <label class="field">
+                分館／館別
+                <input id="branch" type="text" value="新莊典華" readonly>
+              </label>
+              <label class="field">
+                訂金已支付
+                <input id="deposit" type="number" min="0" step="1" value="24000">
+              </label>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">桌餐與服務</h3>
+            <div class="rows" id="mainRows"></div>
+            <button class="button secondary add-row" type="button" data-add="main">新增項目</button>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">其他費用</h3>
+            <label class="check-field" style="justify-content:flex-start;margin-bottom:10px">
+              <input id="showOtherFees" type="checkbox" checked>
+              顯示其他費用
+            </label>
+            <div class="rows" id="otherRows"></div>
+            <button class="button secondary add-row" type="button" data-add="other">新增其他費用</button>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">其他加購</h3>
+            <div class="rows" id="extraRows"></div>
+            <button class="button secondary add-row" type="button" data-add="extra">新增加購</button>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">付款與備註</h3>
+            <div class="grid">
+              <div class="field full">
+                <label>付款方式</label>
+                <div class="checkbox-group">
+                  <label class="check-field"><input type="checkbox" name="payment" value="現金">現金</label>
+                  <label class="check-field"><input type="checkbox" name="payment" value="刷卡">刷卡</label>
+                  <label class="check-field"><input type="checkbox" name="payment" value="先簽帳一周內匯款" checked>先簽帳一周內匯款</label>
+                </div>
+              </div>
+              <label class="field full">
+                說明文字
+                <textarea id="notice">以上未達保證桌處理方式：需支付全額打包帶回</textarea>
+              </label>
+              <label class="field full">
+                左下提醒
+                <textarea id="footerNote">*上述僅為試算之費用，
+不含當日另新增費用及酒水。</textarea>
+              </label>
+            </div>
+          </section>
+        </form>
+      </aside>
+
+      <section class="panel preview-panel" aria-label="尾款試算表預覽">
+        <div class="sheet" id="sheet">
+<table>
+            <colgroup>
+              <col style="width:88px">
+              <col>
+              <col style="width:16%">
+              <col style="width:16%">
+              <col style="width:22%">
+            </colgroup>
+            <tbody id="sheetBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const DRAFT_KEY = "dianhuaBalanceDraft.v3";
+
+    function cloneState(source) {
+      return JSON.parse(JSON.stringify(source));
+    }
+
+    const LOCKED_OTHER_NAMES = [
+      "場租",
+      "舞台",
+      "麥克風",
+      "視訊進系統",
+      "音訊進系統"
+    ];
+
+    const LOCKED_EXTRA_NAMES = [
+      "金牌啤酒600ml每瓶NT$100+10%",
+      "海尼根650ml每瓶NT$120+10%",
+      "精選法國紅酒每瓶NT$500+10%",
+      "礦泉水330ml每瓶NT$30+10%"
+    ];
+
+    const DEFAULT_NOTICE_TEXT = "以上未達保證桌處理方式：需支付全額打包帶回";
+    const DEFAULT_FOOTER_NOTE = "*上述僅為試算之費用，\\n不含當日另新增費用及酒水。";
+
+    const DEFAULT_STATE = {
+      main: [
+        { name: "葷桌單價", price: 11000, qty: 10, adjust: "10" },
+        { name: "素桌單價", price: 11000, qty: 2, adjust: "10" },
+        { name: "主桌加人加量服務費/稅金", price: 1100, qty: 2 },
+        { name: "客桌素食餐", price: 1100, qty: 2, adjust: "10" },
+        { name: "炒飯", price: 198, qty: 2, adjust: "10" }
+      ],
+      other: LOCKED_OTHER_NAMES.map(name => ({ name, price: 0, qty: 0, adjust: "" })),
+      extra: LOCKED_EXTRA_NAMES.map(name => ({ name, price: 0, qty: 0, adjust: "10" }))
+    };
+
+    const EMPTY_STATE = {
+      main: [{ name: "", price: 0, qty: 0, adjust: "10" }],
+      other: LOCKED_OTHER_NAMES.map(name => ({ name, price: 0, qty: 0, adjust: "" })),
+      extra: LOCKED_EXTRA_NAMES.map(name => ({ name, price: 0, qty: 0, adjust: "10" }))
+    };
+
+    let state = cloneState(DEFAULT_STATE);
+
+    const fields = [
+      "eventType", "eventDate", "mealPeriod", "hall", "hallBase", "hallCustom", "hallDisplay", "clientName",
+      "deposit", "notice", "footerNote", "showOtherFees"
+    ];
+
+    const formatMoney = value => Number(value || 0).toLocaleString("zh-TW", {
+      maximumFractionDigits: 0
+    });
+
+    const toDateText = value => {
+      if (!value) return "";
+      const [year, month, day] = value.split("-");
+      return `${year}/${month}/${day}`;
+    };
+
+    const getValue = id => {
+      const element = document.getElementById(id);
+      if (!element) return "";
+      return element.type === "checkbox" ? element.checked : element.value;
+    };
+
+    const setValue = (id, value) => {
+      const element = document.getElementById(id);
+      if (!element) return;
+      if (element.type === "checkbox") {
+        element.checked = Boolean(value);
+        return;
+      }
+      element.value = value;
+    };
+
+    const weekdayText = value => {
+      if (!value) return "";
+      const date = new Date(`${value}T00:00:00`);
+      return ["日", "一", "二", "三", "四", "五", "六"][date.getDay()];
+    };
+
+    const paymentOptions = () => Array
+      .from(document.querySelectorAll('input[name="payment"]'))
+      .filter(input => input.checked)
+      .map(input => input.value)
+      .join("　");
+
+
+    function lockedNamesFor(type) {
+      if (type === "other") return LOCKED_OTHER_NAMES;
+      if (type === "extra") return LOCKED_EXTRA_NAMES;
+      return [];
+    }
+
+    function isLockedRow(type, index) {
+      return index < lockedNamesFor(type).length;
+    }
+
+    function normalizeFixedRows(type) {
+      const locked = lockedNamesFor(type);
+      if (!locked.length) return;
+      const current = state[type] || [];
+      const next = locked.map((name, index) => {
+        const matched = current.find(item => item.name === name) || current[index] || {};
+        return {
+          name,
+          price: Number(matched.price || 0),
+          qty: Number(matched.qty || 0),
+          adjust: matched.adjust || (type === "extra" ? "10" : "")
+        };
+      });
+      current.forEach((item, index) => {
+        if (!locked.includes(item.name) && index >= locked.length) {
+          next.push(Object.assign({ name: "", price: 0, qty: 0, adjust: "" }, item, { comp: undefined }));
+        }
+      });
+      state[type] = next;
+    }
+
+    function normalizeAllFixedRows() {
+      normalizeFixedRows("other");
+      normalizeFixedRows("extra");
+    }
+
+    function rowAdjustValue(item) {
+      if (item.adjust) return item.adjust;
+      if (item.comp) return "comp";
+      return "";
+    }
+
+    function rowAdjustedUnit(type, item) {
+      const price = Number(item.price || 0);
+      const adjust = rowAdjustValue(item);
+      if (adjust === "10") return Math.round(price * 1.1);
+      if (adjust === "5") return Math.round(price * 1.05);
+      return price;
+    }
+
+    function rowSubtotal(type, item) {
+      return rowAdjustedUnit(type, item) * Number(item.qty || 0);
+    }
+
+    function createServiceSelect(type, item, index, labelText) {
+      const adjust = rowAdjustValue(item) || (type === "main" ? "10" : "");
+      return `<label class="field">
+          ${labelText}
+          <select data-type="${type}" data-index="${index}" data-key="adjust">
+            <option value="10" ${adjust === "10" ? "selected" : ""}>10%</option>
+            <option value="5" ${adjust === "5" ? "selected" : ""}>5%</option>
+            <option value="" ${adjust === "" ? "selected" : ""}>0%</option>
+            <option value="comp" ${adjust === "comp" ? "selected" : ""}>招待</option>
+          </select>
+        </label>`;
+    }
+
+    function createRowEditor(type, item, index) {
+      const row = document.createElement("div");
+      row.className = "row-editor";
+      const lockedName = isLockedRow(type, index);
+      const nameAttrs = lockedName ? 'readonly class="calc-input"' : '';
+      const removeButton = lockedName
+        ? `<button class="icon-button" type="button" title="固定品項不可刪除" disabled>×</button>`
+        : `<button class="icon-button" type="button" title="刪除此列" data-remove="${type}" data-index="${index}">×</button>`;
+      const rightField = type === "main"
+        ? createServiceSelect(type, item, index, "服務費")
+        : createServiceSelect(type, item, index, "服務費/稅金");
+      row.innerHTML = `
+        <label class="field">
+          品項
+          <input type="text" value="${item.name}" data-type="${type}" data-index="${index}" data-key="name" ${nameAttrs}>
+        </label>
+        <label class="field">
+          原價
+          <input type="number" min="0" step="1" value="${item.price}" data-type="${type}" data-index="${index}" data-key="price">
+        </label>
+        <label class="field">
+          數量
+          <input type="number" min="0" step="1" value="${item.qty}" data-type="${type}" data-index="${index}" data-key="qty">
+        </label>
+        ${rightField}
+        ${removeButton}
+      `;
+      return row;
+    }
+
+    function renderEditors() {
+      document.getElementById("mainRows").replaceChildren(
+        ...state.main.map((item, index) => createRowEditor("main", item, index))
+      );
+      document.getElementById("otherRows").replaceChildren(
+        ...state.other.map((item, index) => createRowEditor("other", item, index))
+      );
+      document.getElementById("extraRows").replaceChildren(
+        ...state.extra.map((item, index) => createRowEditor("extra", item, index))
+      );
+    }
+
+    function visibleRows(type) {
+      return state[type].filter(item => item.name.trim() || Number(item.price) || Number(item.qty));
+    }
+
+    function totalRows(type, rows) {
+      return rows.reduce((sum, item) => sum + rowSubtotal(type, item), 0);
+    }
+
+    function rowCells(type, item) {
+      const unit = rowAdjustedUnit(type, item);
+      const subtotal = rowSubtotal(type, item);
+      return `
+        <td>${item.name || "&nbsp;"}</td>
+        <td class="center">${formatMoney(unit)}</td>
+        <td class="center">${formatMoney(item.qty)}</td>
+        <td class="right">${formatMoney(subtotal)}</td>
+      `;
+    }
+
+    function rowHtml(type, item) {
+      return `<tr>${rowCells(type, item)}</tr>`;
+    }
+
+    function sectionRows(label, type, rows, emptyText, includeNotice = false) {
+      const visibleCount = Math.max(rows.length, 1) + (includeNotice ? 1 : 0);
+      return `
+        <tr>
+          <td class="side" rowspan="${visibleCount}">${label}</td>
+          ${rows.length ? rowCells(type, rows[0]) : `<td colspan="4" class="empty-state">${emptyText}</td>`}
+        </tr>
+        ${rows.slice(1).map(item => rowHtml(type, item)).join("")}
+        ${includeNotice ? `<tr><td class="red center" colspan="4">${getValue("notice")}</td></tr>` : ""}
+      `;
+    }
+
+
+    function getCheckedValues(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(input => input.value);
+    }
+
+    function setCheckedValues(name, values) {
+      const set = new Set(values || []);
+      document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+        input.checked = set.has(input.value);
+      });
+    }
+
+    function syncHallControls() {
+      const base = getValue("hallBase");
+      document.getElementById("purpleHallBox").classList.toggle("active", base === "紫艷系列");
+      document.getElementById("centuryHallBox").classList.toggle("active", base === "世紀盛典系列");
+      document.getElementById("customHallBox").classList.toggle("active", base === "其他");
+      updateHallDisplay();
+    }
+
+    function updateHallDisplay() {
+      const base = getValue("hallBase");
+      let hall = "";
+      if (base === "紫艷系列") {
+        const areas = getCheckedValues("purpleArea");
+        hall = areas.length ? `紫艷${areas.join("+")}` : "紫艷";
+      } else if (base === "世紀盛典系列") {
+        const areas = getCheckedValues("centuryArea");
+        hall = areas.length === 2 ? "世紀盛典" : (areas[0] || "");
+      } else if (base === "其他") {
+        hall = getValue("hallCustom").trim();
+      } else {
+        hall = base;
+      }
+      setValue("hall", hall);
+      setValue("hallDisplay", hall);
+      return hall;
+    }
+
+    function applyHallFromText(text) {
+      const hall = String(text || "").replace(/廳$/, "").trim();
+      setCheckedValues("purpleArea", []);
+      setCheckedValues("centuryArea", []);
+      setValue("hallCustom", "");
+      const simple = ["法蘿", "沐曦", "雅諾", "亞瑟", "伊麗莎白", "愛丁堡", "格林"];
+      if (simple.includes(hall)) {
+        setValue("hallBase", hall);
+      } else if (hall.startsWith("紫艷")) {
+        setValue("hallBase", "紫艷系列");
+        const rest = hall.replace(/^紫艷/, "").replace(/＋/g, "+").replace(/、/g, "+").replace(/\s+/g, "+");
+        setCheckedValues("purpleArea", rest ? rest.split("+").filter(v => ["好事", "喜事", "盛事"].includes(v)) : []);
+      } else if (hall === "世紀盛典") {
+        setValue("hallBase", "世紀盛典系列");
+        setCheckedValues("centuryArea", ["世紀", "盛典"]);
+      } else if (hall === "世紀" || hall === "盛典") {
+        setValue("hallBase", "世紀盛典系列");
+        setCheckedValues("centuryArea", [hall]);
+      } else if (hall) {
+        setValue("hallBase", "其他");
+        setValue("hallCustom", hall);
+      } else {
+        setValue("hallBase", "");
+      }
+      syncHallControls();
+    }
+
+
+    function mergeFixedText(baseText, value) {
+      const raw = String(value || "").trim();
+      if (!raw) return baseText;
+      if (raw.startsWith(baseText)) return raw;
+      return `${baseText}\n${raw}`;
+    }
+
+    function ensureFixedTexts() {
+      setValue("notice", mergeFixedText(DEFAULT_NOTICE_TEXT, getValue("notice")));
+      setValue("footerNote", mergeFixedText(DEFAULT_FOOTER_NOTE, getValue("footerNote")));
+    }
+
+    function renderSheet() {
+      ensureFixedTexts();
+      updateHallDisplay();
+      const body = document.getElementById("sheetBody");
+      const mainRows = visibleRows("main");
+      const otherRows = getValue("showOtherFees") ? visibleRows("other") : [];
+      const extraRows = visibleRows("extra");
+      const mainTotal = totalRows("main", mainRows);
+      const otherTotal = totalRows("other", otherRows);
+      const extraTotal = totalRows("extra", extraRows);
+      const deposit = Number(getValue("deposit") || 0);
+      const beforeServiceTotal = mainTotal + otherTotal + extraTotal;
+      const grandTotal = beforeServiceTotal;
+      const balance = grandTotal - deposit;
+      const dateText = `${toDateText(getValue("eventDate"))}(${weekdayText(getValue("eventDate"))}) ${getValue("mealPeriod")}`;
+      const title = `新莊典華 ${getValue("hall")} ${dateText} ${getValue("eventType")} ${getValue("clientName")}`;
+      const extras = extraRows.map(item => {
+        const subtotal = rowSubtotal("extra", item);
+        const suffix = subtotal > 0 ? `：${formatMoney(subtotal)}` : "";
+        return `<div class="note-line">● ${item.name}${suffix}</div>`;
+      }).join("") || `<div class="note-line empty-state">尚未輸入其他加購</div>`;
+
+
+      body.innerHTML = `
+        <tr>
+          <td class="sheet-title" colspan="5">${title}</td>
+        </tr>
+        <tr>
+          <td class="head side"></td>
+          <td class="head">品項</td>
+          <td class="head">單價(含稅)</td>
+          <td class="head">保證數量</td>
+          <td class="head">小計</td>
+        </tr>
+        ${sectionRows("餐飲服務", "main", mainRows, "尚未輸入餐飲服務項目", true)}
+        ${getValue("showOtherFees") ? sectionRows("其他費用", "other", otherRows, "尚未輸入其他費用項目") : ""}
+        <tr>
+          <td class="side" rowspan="4">費用試算</td>
+          <td class="subtotal-label" colspan="3">總計</td>
+          <td class="right">${formatMoney(beforeServiceTotal)}</td>
+        </tr>
+        <tr>
+          <td class="subtotal-label" colspan="3">定金已支付</td>
+          <td class="right">${formatMoney(deposit)}</td>
+        </tr>
+        <tr>
+          <td class="subtotal-label" colspan="3">尾款總計</td>
+          <td class="right"><strong>${formatMoney(balance)}</strong></td>
+        </tr>
+        <tr>
+          <td class="red center" colspan="4">付款方式：${paymentOptions()}</td>
+        </tr>
+        <tr>
+          <td colspan="5">其他加購：</td>
+        </tr>
+        <tr>
+          <td colspan="5" style="padding:0;border-bottom:0">${extras}</td>
+        </tr>
+        <tr>
+          <td colspan="5" class="signature" style="padding:0">
+            <div class="signature-grid">
+              <div class="signature-left red">${getValue("footerNote").replace(/\n/g, "<br>")}</div>
+              <div class="signature-right red">
+                賓客確認：
+                <span class="date-mark">年月日</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function clearForNewEntry() {
+      const preservedNotice = getValue("notice") || DEFAULT_NOTICE_TEXT;
+      const preservedFooter = getValue("footerNote") || DEFAULT_FOOTER_NOTE;
+      state = cloneState(EMPTY_STATE);
+      normalizeAllFixedRows();
+      setValue("eventType", "");
+      setValue("eventDate", "");
+      setValue("mealPeriod", "");
+      setValue("hallBase", "");
+      setValue("hall", "");
+      setValue("hallCustom", "");
+      setCheckedValues("purpleArea", []);
+      setCheckedValues("centuryArea", []);
+      syncHallControls();
+      setValue("clientName", "");
+      setValue("branch", "新莊典華");
+      setValue("deposit", 0);
+      setValue("showOtherFees", true);
+      setValue("notice", preservedNotice);
+      setValue("footerNote", preservedFooter);
+      document.querySelectorAll('input[name="payment"]').forEach(input => {
+        input.checked = false;
+      });
+      renderEditors();
+      renderSheet();
+      saveDraft();
+    }
+
+    function saveDraft() {
+      const draft = {
+        state,
+        fields: {},
+        payments: Array.from(document.querySelectorAll('input[name="payment"]:checked')).map(input => input.value)
+      };
+      fields.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) draft.fields[id] = getValue(id);
+      });
+      draft.fields.purpleAreas = getCheckedValues("purpleArea");
+      draft.fields.centuryAreas = getCheckedValues("centuryArea");
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    }
+
+    function loadDraft() {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      try {
+        const draft = JSON.parse(raw);
+        if (draft.state?.main) state.main = draft.state.main;
+        if (draft.state?.other) state.other = draft.state.other;
+        if (draft.state?.extra) state.extra = draft.state.extra;
+        ["main","other","extra"].forEach(type => {
+          state[type] = (state[type] || []).map(item => Object.assign({}, item, { adjust: item.adjust || (item.comp ? "comp" : (type === "main" ? "10" : "")) }));
+        });
+        normalizeAllFixedRows();
+        if (!draft.state?.other) {
+          const otherNames = ["場租", "舞臺", "舞台"];
+          state.other = state.main.filter(item => otherNames.includes(item.name));
+          state.main = state.main.filter(item => !otherNames.includes(item.name));
+          if (!state.other.length) {
+            state.other = [
+              { name: "場租", price: 0, qty: 0 },
+              { name: "舞臺", price: 3150, qty: 1 }
+            ];
+          }
+        }
+        fields.forEach(id => {
+          const element = document.getElementById(id);
+          if (element && draft.fields?.[id] !== undefined) setValue(id, draft.fields[id]);
+        });
+        if (draft.fields?.hallBase) {
+          setValue("hallBase", draft.fields.hallBase);
+          setValue("hallCustom", draft.fields.hallCustom || "");
+        } else {
+          applyHallFromText(draft.fields?.hall || "");
+        }
+        if (draft.fields?.purpleAreas) setCheckedValues("purpleArea", draft.fields.purpleAreas);
+        if (draft.fields?.centuryAreas) setCheckedValues("centuryArea", draft.fields.centuryAreas);
+        syncHallControls();
+        setValue("branch", "新莊典華");
+        if (draft.payments) {
+          document.querySelectorAll('input[name="payment"]').forEach(input => {
+            input.checked = draft.payments.includes(input.value);
+          });
+        }
+      } catch {
+        localStorage.removeItem(DRAFT_KEY);
+      }
+    }
+
+    document.addEventListener("input", event => {
+      const input = event.target;
+      const { type, index, key } = input.dataset;
+      if (type && key) {
+        state[type][Number(index)][key] = key === "name" || key === "adjust" ? input.value : Number(input.value || 0);
+      }
+      if (input.id === "hallCustom") syncHallControls();
+      renderSheet();
+      saveDraft();
+    });
+
+    document.addEventListener("change", event => {
+      const input = event.target;
+      const { type, index, key } = input.dataset;
+      if (type && key) {
+        state[type][Number(index)][key] = key === "name" || key === "adjust" ? input.value : Number(input.value || 0);
+      }
+      if (input.id === "hallBase" || input.id === "hallCustom" || input.name === "purpleArea" || input.name === "centuryArea") {
+        syncHallControls();
+      }
+      renderEditors();
+      renderSheet();
+      saveDraft();
+    });
+
+    document.addEventListener("click", event => {
+      const addType = event.target.dataset.add;
+      const removeType = event.target.dataset.remove;
+
+      if (addType) {
+        state[addType].push({ name: "", price: 0, qty: 0, adjust: addType === "main" ? "10" : "" });
+        renderEditors();
+        renderSheet();
+        saveDraft();
+      }
+
+      if (removeType) {
+        const removeIndex = Number(event.target.dataset.index);
+        if (isLockedRow(removeType, removeIndex)) return;
+        state[removeType].splice(removeIndex, 1);
+        renderEditors();
+        renderSheet();
+        saveDraft();
+      }
+    });
+
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      localStorage.removeItem("dianhuaBalanceDraft");
+      localStorage.removeItem(DRAFT_KEY);
+      clearForNewEntry();
+    });
+
+    if (!localStorage.getItem(DRAFT_KEY)) {
+      setValue("hallBase", "亞瑟");
+      syncHallControls();
+    }
+    loadDraft();
+    normalizeAllFixedRows();
+    syncHallControls();
+    renderEditors();
+    renderSheet();
+  </script>
+</body>
+</html>

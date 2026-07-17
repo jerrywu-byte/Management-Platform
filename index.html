@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>宴會場次製作平台</title>
+<style>
+:root{
+  --bg:#f5f1ec; --panel:#fffaf4; --ink:#30251f; --muted:#806f64;
+  --line:#dfd2c5; --accent:#8b5e4a; --accent2:#b58a72; --ok:#4f7d58;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif}
+.topbar{height:82px;background:#fffaf4;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:12px 18px}.platform-brand{display:flex;align-items:center;gap:14px;min-width:0}.platform-right{display:flex;align-items:center;gap:14px}.platform-logo{height:46px;width:auto;display:block;object-fit:contain;flex:0 0 auto}
+h1{font-size:22px;margin:0 0 3px}p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.app{height:calc(100% - 82px);display:grid;grid-template-columns:270px 1fr}
+.sidebar{border-right:1px solid var(--line);background:#fffaf4;padding:16px;overflow:auto}
+.navbtn{width:100%;display:block;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;margin:0 0 10px;padding:13px 14px;cursor:pointer;color:var(--ink)}
+.navbtn:hover{border-color:var(--accent2)}
+.navbtn.active{background:var(--accent);color:white;border-color:var(--accent)}
+.navbtn small{display:block;margin-top:4px;color:inherit;opacity:.75;line-height:1.35}
+.note{background:#fff;border:1px dashed var(--line);padding:10px;border-radius:12px;font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px}
+.frameWrap{height:100%;padding:14px}
+iframe{width:100%;height:100%;border:1px solid var(--line);border-radius:18px;background:white;box-shadow:0 10px 28px rgba(55,38,26,.1)}
+.badge{font-size:12px;background:#e9f3e9;color:#416d48;border:1px solid #bbd0bd;padding:4px 9px;border-radius:999px}
+@media(max-width:900px){.app{grid-template-columns:1fr;height:auto}.sidebar{border-right:0;border-bottom:1px solid var(--line)}.frameWrap{height:78vh}.topbar{height:auto;align-items:flex-start;gap:12px;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="platform-brand">
+    <img class="platform-logo" src="assets/dianhua-logo.png" alt="典華">
+    <div>
+      <h1>宴會場次製作平台</h1>
+      <p>V3.1.8：V2 桌卡 / 菜卡 / 位卡保留，新增桌圖設計、尾款試算表、場次資訊確認書三個模組；桌卡模組加入圖片自動判斷 / OCR 接口。</p>
+    </div>
+  </div>
+  <div class="platform-right"><span class="badge">版本：V3.1.8</span></div>
+</header>
+<main class="app">
+  <aside class="sidebar">
+    <button class="navbtn active" data-src="modules/cards/index.html">
+      桌卡 / 菜卡 / 位卡
+      <small>沿用 V2.7.1 定案版，先不破壞原功能。</small>
+    </button>
+    <button class="navbtn" data-src="modules/floor-plan/index.html">
+      桌圖設計
+      <small>先建立欄位與輸出區，內容待建構。</small>
+    </button>
+    <button class="navbtn" data-src="modules/final-balance/index.html">
+      尾款試算表
+      <small>已整理附件版尾款試算表，採單機本機使用。</small>
+    </button>
+    <button class="navbtn" data-src="modules/confirmation/index.html">
+      場次資訊確認書
+      <small>宴會前一週給客人確認與回簽。</small>
+    </button>
+    <div class="note">
+      <b>目前狀態：</b><br>
+      這是 V3.1.8 架構版。三個新模組先建在同一個單機平台裡；圖片自動判斷 / OCR 先建立接口，之後再接本機 OCR。<br><br>
+      <b>使用提醒：</b><br>
+      這份不用 GitHub、不需網路，解壓縮後直接開啟即可。
+    </div>
+  </aside>
+  <section class="frameWrap">
+    <iframe id="moduleFrame" src="modules/cards/index.html"></iframe>
+  </section>
+</main>
+<script>
+document.querySelectorAll('.navbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('moduleFrame').src=btn.dataset.src;
+  });
+});
+</script>
+</body>
+</html>
